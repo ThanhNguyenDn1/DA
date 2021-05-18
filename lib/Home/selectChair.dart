@@ -1,14 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ticketapp/Controller/Home_controller.dart';
+import 'package:ticketapp/Controller/Chair_controller.dart';
 import 'package:ticketapp/Home/detailSearch.dart';
+import 'package:ticketapp/Models/SeatInfor.dart';
 import 'package:ticketapp/Theme/colors.dart';
 import 'package:ticketapp/Theme/styles.dart';
 
 class SelectChair extends StatefulWidget {
   late String nhaxe, noidi, noiden, giodi, gioden, day;
   late double giatien;
+  late int maChuyenXe;
 
   SelectChair(
       {required this.nhaxe,
@@ -17,17 +19,24 @@ class SelectChair extends StatefulWidget {
       required this.giodi,
       required this.gioden,
       required this.giatien,
-      required this.day});
+      required this.day,
+      required this.maChuyenXe});
 
   @override
-  _SelectChairState createState() => _SelectChairState();
+  State<StatefulWidget> createState() {
+    // TODO: implement createState
+    return _SelectChairState(maCx: this.maChuyenXe);
+  }
 }
 
 class _SelectChairState extends State<SelectChair> {
-  HomeController controllerChair = Get.find();
+  late int maCx;
+  _SelectChairState({required this.maCx});
+  ChairController controllerChair = Get.put(ChairController());
 
   @override
   Widget build(BuildContext context) {
+    //controllerChair.apiGetChair();
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
@@ -70,8 +79,7 @@ class _SelectChairState extends State<SelectChair> {
                   color: AppColors.colors_icons,
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.shadow.withOpacity(0.2)
-                      ,
+                      color: AppColors.shadow.withOpacity(0.2),
                       blurRadius: 20,
                       offset: Offset(4, 10),
                     )
@@ -165,74 +173,82 @@ class _SelectChairState extends State<SelectChair> {
                     padding:
                         const EdgeInsets.only(left: 30, right: 30, bottom: 20),
                     child: Container(
-                      padding: EdgeInsets.all(10),
-                      height: 430,
-                      decoration: BoxDecoration(
-                          color: AppColors.scaffold,
-                          borderRadius: BorderRadius.circular(15),
-                          border:
-                              Border.all(width: 1, color: AppColors.scaffold),
-                          boxShadow: [
-                            BoxShadow(
-                              color: AppColors.shadow.withOpacity(0.2),
-                              blurRadius: 20,
-                              offset: Offset(4, 10),
-                            )
-                          ]),
-                      child: GridView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: controllerChair.listChair.length,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 6,
-                            crossAxisSpacing: 0,
-                            mainAxisSpacing: 20),
-                        itemBuilder: (BuildContext context, int index) {
-                          return Padding(
-                            padding: const EdgeInsets.all(5),
-                            child: Container(
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: AppColors.background),
-                                color:
-                                    controllerChair.listChair[index].tinhtrang
+                        padding: EdgeInsets.all(10),
+                        height: 430,
+                        decoration: BoxDecoration(
+                            color: AppColors.scaffold,
+                            borderRadius: BorderRadius.circular(15),
+                            border:
+                                Border.all(width: 1, color: AppColors.scaffold),
+                            boxShadow: [
+                              BoxShadow(
+                                color: AppColors.shadow.withOpacity(0.2),
+                                blurRadius: 20,
+                                offset: Offset(4, 10),
+                              )
+                            ]),
+                        child: Obx(() => GridView.builder(
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: controllerChair.listSeat.length,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                    crossAxisCount: 6,
+                                    crossAxisSpacing: 0,
+                                    mainAxisSpacing: 20),
+                            itemBuilder: (BuildContext context, int index) {
+                              return Padding(
+                                padding: const EdgeInsets.all(5),
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(10),
+                                    border:
+                                        Border.all(color: AppColors.background),
+                                    color: controllerChair
+                                            .listChair[index].tinhtrang
                                         ? Colors.blue
                                         : controllerChair
                                             .listChair[index].colorChair,
-                              ),
-                              child: InkWell(
-                                onTap: () {
-                                  setState(() {
-                                    if (controllerChair
-                                        .listChair[index].tinhtrang) {
-                                    } else {
-                                      if (controllerChair
-                                              .listChair[index].colorChair ==
-                                          AppColors.background) {
-                                        controllerChair.listChair[index]
-                                            .colorChair = Colors.white;
-                                        controllerChair.listSelected.remove(
-                                            controllerChair
-                                                .listChair[index].name);
-                                      } else {
-                                        controllerChair.listChair[index]
-                                            .colorChair = AppColors.background;
-                                        controllerChair.listSelected.add(
-                                            controllerChair
-                                                .listChair[index].name);
-                                      }
-                                    }
-                                  });
-                                  //  print(controllerChair.listSelected);
-                                },
-                                child: Center(
-                                    child: Text(
-                                        controllerChair.listChair[index].name)),
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
+                                  ),
+                                  child: InkWell(
+                                    onTap: () {
+                                      setState(() {
+                                        if (controllerChair
+                                            .listChair[index].tinhtrang) {
+                                        } else {
+                                          if (controllerChair.listChair[index]
+                                                  .colorChair ==
+                                              AppColors.background) {
+                                            controllerChair.listChair[index]
+                                                .colorChair = Colors.white;
+                                            controllerChair.listSelected.remove(SeatInfor(
+                                                name: controllerChair
+                                                    .listChair[index].name,
+                                                MaGhe: controllerChair
+                                                    .listChair[index].id));
+                                          } else {
+                                            controllerChair.listChair[index]
+                                                    .colorChair =
+                                                AppColors.background;
+                                            controllerChair.listSelected.add(
+                                                SeatInfor(
+                                                    name: controllerChair
+                                                        .listChair[index].name,
+                                                    MaGhe: controllerChair
+                                                        .listChair[index].id));
+                                          }
+
+                                        }
+                                        print(controllerChair.listSelected.length);
+                                      });
+                                      //  print(controllerChair.listSelected);
+                                    },
+                                    child: Center(
+                                        child: Text(controllerChair
+                                            .listChair[index].name)),
+                                  ),
+                                ),
+                              );
+                            }))),
                   ),
                   Container(
                     child: Column(

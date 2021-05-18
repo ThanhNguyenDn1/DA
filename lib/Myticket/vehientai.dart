@@ -1,12 +1,13 @@
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ticketapp/Controller/Chair_controller.dart';
 import 'package:ticketapp/Controller/Home_controller.dart';
 import 'package:ticketapp/Myticket/myticketInfor.dart';
 import 'package:ticketapp/Theme/colors.dart';
 import 'package:ticketapp/Theme/styles.dart';
 class vehientai extends StatelessWidget {
-  HomeController controllervht = Get.find();
+  ChairController controllervht = Get.find();
   @override
   Widget build(BuildContext context) {
     return Scaffold(

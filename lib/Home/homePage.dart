@@ -40,8 +40,9 @@ class _HomePageState extends State<HomePage> {
   HomeController homeController = Get.put(HomeController());
   @override
   Widget build(BuildContext context) {
-    homeController.day.value= pickday;
-    print(homeController.day.value);
+
+    // homeController.gethistory();
+    //print(homeController.day.value);
 
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(statusBarColor: Colors.transparent,statusBarIconBrightness: Brightness.light));
     return Scaffold(
@@ -312,6 +313,7 @@ class _HomePageState extends State<HomePage> {
                       height: 50,
                       child: InkWell(
                           onTap: () {
+                            homeController.day.value= pickday;
                             onsearch();
                             // Get.to(() => KetquaSearch(day:pickday));
                           },
@@ -361,7 +363,7 @@ class _HomePageState extends State<HomePage> {
                                       fontSize: 17),
                                 ),
                                 onTap: () {
-                                 ///
+                                 homeController.deleteHistory();
                                 },
                               )
                             ],
@@ -377,9 +379,9 @@ class _HomePageState extends State<HomePage> {
                   padding: EdgeInsets.symmetric(horizontal: 10),
                   height: 110,
                   decoration: BoxDecoration(color: Colors.transparent),
-                  child: ListView.builder(
+                  child: Obx(()=>homeController.listHistory.length==0?Center(child: Container(),):ListView.builder(
                     scrollDirection: Axis.horizontal,
-                    itemCount: 5,
+                    itemCount: homeController.listHistory.length,
                     itemBuilder: (context, index) {
                       return Padding(
                         padding: const EdgeInsets.all(5),
@@ -413,7 +415,7 @@ class _HomePageState extends State<HomePage> {
                                           width: 10,
                                         ),
                                         Text(
-                                          "Noi Di",
+                                          "${homeController.listHistory[index].noiDi}",
                                           style: TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,
@@ -449,7 +451,7 @@ class _HomePageState extends State<HomePage> {
                                           width: 10,
                                         ),
                                         Text(
-                                          "Noi Den",
+                                          "${homeController.listHistory[index].noiDen}",
                                           style: TextStyle(
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,
@@ -466,7 +468,7 @@ class _HomePageState extends State<HomePage> {
                                           width: 32,
                                         ),
                                         Text(
-                                          "Ngay Di",
+                                          "${homeController.listHistory[index].ngayDi}",
                                           style: TextStyle(
                                               fontSize: 18, color: Colors.black),
                                         ),
@@ -478,7 +480,7 @@ class _HomePageState extends State<HomePage> {
                             )),
                       );
                     },
-                  ),
+                  ))
                 )
               ],
             ),
@@ -498,7 +500,7 @@ class _HomePageState extends State<HomePage> {
 
       );
     } else {
-      homeController.listHistory.add(SearchObj(homeController.noidi.text, homeController.noiden.text, pickday));
+      //homeController.listHistory.add(SearchObj(homeController.noidi.text, homeController.noiden.text, pickday));
       homeController.apiGetAllBusStation();
     }
   }

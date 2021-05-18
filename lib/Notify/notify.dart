@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ticketapp/Controller/Home_controller.dart';
+import 'package:ticketapp/Controller/Chair_controller.dart';
 import 'package:ticketapp/Home/bottom_nav_bar.dart';
-import 'package:ticketapp/Home/homePage.dart';
 import 'package:ticketapp/Theme/colors.dart';
 import 'package:ticketapp/Theme/styles.dart';
 
 class Notify extends StatelessWidget {
-  HomeController controllerNotify = Get.find();
+  ChairController controllerNotify = Get.find();
   @override
   Widget build(BuildContext context) {
     return Scaffold(

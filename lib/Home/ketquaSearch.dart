@@ -2,17 +2,18 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/painting.dart';
 import 'package:get/get.dart';
+import 'package:intl/intl.dart';
 import 'package:ticketapp/Controller/Home_controller.dart';
 import 'package:ticketapp/Home/selectChair.dart';
-import 'package:ticketapp/Theme/colors.dart';
-import 'package:ticketapp/Theme/styles.dart';
+import 'package:ticketapp/Models/ticketObj.dart';
+
 
 class KetquaSearch extends StatelessWidget {
   String noidi, noiden, day;
   KetquaSearch({required this.noidi, required this.noiden, required this.day});
   HomeController controllersearch = Get.find();
   @override
-  Widget itemTiker() {
+  Widget itemTiker(TicketObj obj) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
@@ -70,7 +71,7 @@ class KetquaSearch extends StatelessWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          Text("15:30",
+                          Text(time(obj.ngayXuatBen),
                               style: TextStyle(
                                   fontSize: 30,
                                   fontWeight: FontWeight.bold,
@@ -80,7 +81,7 @@ class KetquaSearch extends StatelessWidget {
                           Text("---------",
                               style: TextStyle(
                                   fontSize: 15, color: Colors.black12)),
-                          Text("10 giờ 15 phút",
+                          Text(times(obj.ngayXuatBen, obj.ngayDen),
                               style:
                                   TextStyle(fontSize: 18, color: Colors.grey)),
                           Text("---------",
@@ -88,7 +89,7 @@ class KetquaSearch extends StatelessWidget {
                                   fontSize: 15, color: Colors.black12)),
                           Icon(Icons.album, color: Colors.red, size: 15),
                           SizedBox(width: 5),
-                          Text("15:30",
+                          Text(time(obj.ngayDen),
                               style: TextStyle(
                                   fontSize: 30,
                                   fontWeight: FontWeight.bold,
@@ -104,7 +105,7 @@ class KetquaSearch extends StatelessWidget {
                           Container(
                             width: 140,
                             // decoration: BoxDecoration(color: Colors.blue),
-                            child: Text("Bến Xe nước ngầm",
+                            child: Text(obj.tenBxDi,
                                 style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -119,7 +120,7 @@ class KetquaSearch extends StatelessWidget {
                                 children: <Widget>[
                                   Container(
                                     width: 120,
-                                    child: Text("Bến Xe miền đông Hồ Chí Minh",
+                                    child: Text(obj.tenBxDen,
                                         style: TextStyle(
                                             fontSize: 18,
                                             fontWeight: FontWeight.bold,
@@ -148,18 +149,18 @@ class KetquaSearch extends StatelessWidget {
                             children: <Widget>[
                               SizedBox(width: 15),
                               Container(
-                                color: AppColors.background,
-                                // child: CircleAvatar(
-                                //   backgroundImage: AssetImage(""),
-                                //   radius: 100,
-                                // ),
-                                height: 40,
-                                width: 40,
+                                child: CircleAvatar(
+                                  backgroundImage:
+                                      AssetImage("assets/images/khach2.png"),
+                                  radius: 100.0,
+                                ),
+                                height: 50,
+                                width: 50,
                               ),
                               SizedBox(width: 10),
                               Column(
                                 children: <Widget>[
-                                  Text("Tý Nghĩa",
+                                  Text(obj.nhaXe,
                                       style: TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold,
@@ -209,7 +210,7 @@ class KetquaSearch extends StatelessWidget {
                       children: [
                         Row(children: <Widget>[
                           SizedBox(width: 15),
-                          Text("Còn 30 chỗ trống",
+                          Text("Còn ${obj.soChoTrong} chỗ trống",
                               style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
@@ -217,7 +218,9 @@ class KetquaSearch extends StatelessWidget {
                           Expanded(
                               child: Row(
                             children: <Widget>[
-                              Text("700.000đ",
+                              Text(
+                                  NumberFormat.simpleCurrency(locale: 'vi')
+                                      .format(obj.donGia),
                                   style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -238,58 +241,108 @@ class KetquaSearch extends StatelessWidget {
     );
   }
 
+  String time(String time) {
+    return time.substring(11, 16);
+  }
+
+  String times(String time1, String time2) {
+    DateTime s1 = DateTime.parse(time1);
+    DateTime s2 = DateTime.parse(time2);
+    var t = s2.difference(s1);
+    time1 = t.toString().substring(0, 5);
+    return time1.substring(0, 2) + " Giờ " + time1.substring(3, 4) + " Phút";
+  }
+
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        toolbarHeight: 80,
         automaticallyImplyLeading: false,
         elevation: 1,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              child: Row(
-                children: <Widget>[
-                  Text("$noidi"),
-                  Icon(
-                    Icons.arrow_forward,
-                    color: Colors.white,
-                  ),
-                  Text("$noiden"),
-                ],
-              ),
+        title: Container(
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            SizedBox(height: 25),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text("$noidi",
+                    style:
+                        TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+                SizedBox(width: 10),
+                Icon(
+                  Icons.arrow_right_alt,
+                  color: Colors.white,
+                  size: 25,
+                ),
+                SizedBox(width: 10),
+                Text("$noiden",
+                    style:
+                        TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
+              ],
             ),
-            SizedBox(
-              width: 10,
-            ),
+            SizedBox(height: 5),
+            Text("$day", style: TextStyle(fontSize: 18))
           ],
-        ),
+        )),
         backgroundColor: Color(0xff4949ff),
       ),
       body: Container(
         padding: EdgeInsets.symmetric(horizontal: 15),
         height: MediaQuery.of(context).size.height,
         color: Color(0xffedeaea),
-        child: ListView.builder(
-            scrollDirection: Axis.vertical,
-            itemCount: 10,
-            itemBuilder: (context, index) {
-              return index == 0
-                  ? Container(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      SizedBox(height: 20),
-                      Text("Đặt chuyến xe trực tuyến",
-                          style: TextStyle(
-                              fontSize: 28,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black)),
-                      //itemTiker(),
-                      itemTiker(),
-                    ],
-                  ))
-                  : itemTiker();
-            }),
+        child: controllersearch.listsearch.length == 0
+            ? Container(
+                child: Center(
+                    child: Text("Không tìm thấy chuyến xe phù hợp với bạn!",
+                        style: TextStyle(fontSize: 20))))
+            : ListView.builder(
+                scrollDirection: Axis.vertical,
+                itemCount: controllersearch.listsearch.length,
+                itemBuilder: (context, index) {
+                  TicketObj obj = controllersearch.listsearch[index];
+                  return index == 0
+                      ? Container(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          SizedBox(height: 20),
+                          Text("Đặt chuyến xe trực tuyến",
+                              style: TextStyle(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black)),
+                          //itemTiker(),
+                          InkWell(child: itemTiker(obj),
+                          onTap: (){
+                            controllersearch.maCx=obj.maChuyenXe;
+                            Get.to(() => SelectChair(
+                              maChuyenXe: obj.maChuyenXe,
+                              nhaxe: obj.nhaXe,
+                              noidi: obj.tenBxDi,
+                              noiden: obj.tenBxDen,
+                              giodi: obj.ngayXuatBen,
+                              gioden: obj.ngayDen,
+                              giatien: obj.donGia,
+                              day: controllersearch.day.value,
+                            ));
+                          })
+                        ],
+                      ))
+                      : InkWell(child: itemTiker(obj), onTap: () {
+                        controllersearch.maCx=obj.maChuyenXe;
+                        Get.to(() => SelectChair(
+                    maChuyenXe: obj.maChuyenXe,
+                    nhaxe: obj.nhaXe,
+                    noidi: obj.tenBxDi,
+                    noiden: obj.tenBxDen,
+                    giodi: obj.ngayXuatBen,
+                    gioden: obj.ngayDen,
+                    giatien: obj.donGia,
+                    day: controllersearch.day.value,
+                  ));});
+                }),
       ),
       /*child: Padding(
           padding: const EdgeInsets.all(15),
@@ -536,7 +589,6 @@ class KetquaSearch extends StatelessWidget {
                 ],
               )),
         ),*/
-
     );
   }
 }

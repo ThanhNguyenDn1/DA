@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ticketapp/Controller/Home_controller.dart';
+import 'package:ticketapp/Controller/Chair_controller.dart';
+import 'package:ticketapp/Models/SeatInfor.dart';
 import 'package:ticketapp/Theme/colors.dart';
 import 'package:ticketapp/Theme/styles.dart';
 
 class MyticketInfor extends StatelessWidget {
   late String nhaxe, noidi, noiden, giodi, gioden, day;
   late double giatien;
-  late List<String> listcho;
+  late List<SeatInfor> listcho;
   MyticketInfor(
       {required this.nhaxe,
       required this.noidi,
@@ -18,7 +19,7 @@ class MyticketInfor extends StatelessWidget {
         required this.giatien,
         required this.listcho});
 
-  HomeController controllerMtI = Get.put(HomeController());
+  ChairController controllerMtI = Get.put(ChairController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -1,10 +1,11 @@
 import 'dart:convert';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_rx/get_rx.dart';
+import 'package:get/get_rx/src/rx_types/rx_types.dart';
+import 'package:ticketapp/Controller/Login_controller.dart';
 import 'package:ticketapp/Home/ketquaSearch.dart';
-import 'package:ticketapp/Models/accountObj.dart';
 import 'package:ticketapp/Models/busstation.dart';
 import 'package:ticketapp/Models/chairObj.dart';
 import 'package:ticketapp/Models/searchObj.dart';
@@ -13,76 +14,28 @@ import 'package:ticketapp/Models/ticketObj.dart';
 import 'package:ticketapp/http/request.dart';
 
 class HomeController extends GetxController {
-// var noidi = RxString("");
-// var noiden = RxString("");
-  var day="".obs;
+  var maCx;
+  var day = "".obs;
   final TextEditingController noidi = TextEditingController();
   final TextEditingController noiden = TextEditingController();
-  final RxList listHistory = [].obs;
+  var listHistory = <SearchObj>[].obs;
+  LoginController loginController = Get.find();
 
-  List<String> listSelected = [];
+
   List<TicketObj> listsearch = [
     // TicketObj("Hạnh Luyến", "Quảng Bình", "Đà Nẵng", "6h", "10h", 200000, 12),
     // TicketObj("Trung Tính", "Quảng Bình", "Đà Nẵng", "4h", "8h", 250000, 20),
     // TicketObj("Hạnh Luyến", "Quảng Bình", "Đà Nẵng", "13h", "17h", 220000, 15),
   ];
-  List<String> inforAccount = [
-    "Phạm Văn Phương",
-    "0776261632",
-    "Quảng Bình",
-    "5277224242233"
-  ];
-  List<ChairObj> listChair = [
-    ChairObj(
-      01,
-      "A1",
-      true,
-      Colors.white,
-    ),
-    ChairObj(
-      02,
-      "A2",
-      false,
-      Colors.white,
-    ),
-    ChairObj(03, "A3", false, Colors.white),
-    ChairObj(04, "B1", false, Colors.white),
-    ChairObj(05, "B2", false, Colors.white),
-    ChairObj(06, "B3", false, Colors.white),
-    ChairObj(07, "A4", false, Colors.white),
-    ChairObj(08, "A5", false, Colors.white),
-    ChairObj(09, "A6", true, Colors.white),
-    ChairObj(10, "B4", true, Colors.white),
-    ChairObj(11, "B5", false, Colors.white),
-    ChairObj(12, "B6", false, Colors.white),
-    ChairObj(13, "A7", true, Colors.white),
-    ChairObj(14, "A8", false, Colors.white),
-    ChairObj(15, "A9", false, Colors.white),
-    ChairObj(16, "B7", false, Colors.white),
-    ChairObj(17, "B8", false, Colors.white),
-    ChairObj(18, "B9", false, Colors.white),
-    ChairObj(19, "A10", false, Colors.white),
-    ChairObj(20, "A11", false, Colors.white),
-    ChairObj(21, "A12", false, Colors.white),
-    ChairObj(22, "B10", false, Colors.white),
-    ChairObj(23, "B11", false, Colors.white),
-    ChairObj(24, "B12", false, Colors.white),
-    ChairObj(25, "A13", false, Colors.white),
-    ChairObj(26, "A14", false, Colors.white),
-    ChairObj(27, "A15", false, Colors.white),
-    ChairObj(28, "B13", false, Colors.white),
-    ChairObj(29, "B14", false, Colors.white),
-    ChairObj(30, "B15", false, Colors.white),
-    ChairObj(31, "A16", false, Colors.white),
-    ChairObj(32, "A17", false, Colors.white),
-    ChairObj(33, "A18", false, Colors.white),
-    ChairObj(34, "B16", false, Colors.white),
-    ChairObj(35, "B17", false, Colors.white),
-    ChairObj(36, "B18", false, Colors.white),
-  ];
+  @override
+  void onInit() {
+    gethistory();
+    // TODO: implement onInit
+    super.onInit();
+  }
 
-  List<TicketInforObj> listTicketed = [];
 
+  @override
   void apiGetAllBusStation() async {
     Get.dialog(Center(child: CircularProgressIndicator()),
         barrierDismissible: false);
@@ -93,11 +46,9 @@ class HomeController extends GetxController {
         header: headers);
     request.get().then((value) {
       var responseData = jsonDecode(value.body) as List;
-      print(responseData.length);
       List<BusStation> ListBusStation = responseData.map((e) {
         return BusStation(maBx: e["maBx"], tenBx: e["tenBx"]);
       }).toList();
-      print("hi: ${ListBusStation.length}");
       tk(ListBusStation);
     }).catchError((e) {
       print("loi ${e.toString()}");
@@ -108,8 +59,6 @@ class HomeController extends GetxController {
     if (s.length != 0) {
       if (getMaBx(s, noidi.text.toUpperCase()) != 0) {
         if (getMaBx(s, noiden.text.toUpperCase()) != 0) {
-          print(getMaBx(s, noidi.text.toUpperCase()));
-          print(getMaBx(s, noiden.text.toUpperCase()));
           int maBxdi = getMaBx(s, noidi.text.toUpperCase());
           int maBxden = getMaBx(s, noiden.text.toUpperCase());
           String url =
@@ -126,9 +75,12 @@ class HomeController extends GetxController {
               listsearch = responseDatas.map((e) {
                 return TicketObj.fromJson(e);
               }).toList();
-
               Get.back();
-
+              SearchObj obj = SearchObj(
+                  noiDen: getTenBx(s, noiden.text.toUpperCase()),
+                  noiDi: getTenBx(s, noidi.text.toUpperCase()),
+                  ngayDi: day.value);
+              addHistory(obj);
               Get.to(() => KetquaSearch(
                     noidi: getTenBx(s, noidi.text.toUpperCase()),
                     noiden: getTenBx(s, noiden.text.toUpperCase()),
@@ -182,7 +134,79 @@ class HomeController extends GetxController {
     String yyyy = s.substring(6, s.length);
     String mm = s.substring(2, 6);
     String dd = s.substring(0, 2);
-    print("${dd + mm + yyyy}");
     return (yyyy + mm + dd);
+  }
+
+  void addHistory(SearchObj obj) {
+    int stt = 0;
+    for (int i = 0; i < listHistory.length; i++) {
+      SearchObj objj = listHistory[i];
+      if (obj.ngayDi == objj.ngayDi &&
+          obj.noiDi == objj.noiDi &&
+          obj.noiDen == objj.noiDen) {
+        stt = 1;
+        break;
+      }
+    }
+    if (stt == 0) {
+      String url = "https://qlbvxk.herokuapp.com/api/histories";
+      var headers = {"Content-type": "application/json"};
+      Request request = Request(
+          Url: url,
+          body: jsonEncode({
+            "MaNd": loginController.accountObj.maNd,
+            "NoiDen": obj.noiDen,
+            "NoiDi": obj.noiDi,
+            "NgayDi": obj.ngayDi
+          }),
+          header: headers);
+      request.post().then((value) {
+        var responseData = jsonDecode(value.body) as List;
+        listHistory.value = responseData.map((e) {
+          return SearchObj.fromJson(e);
+        }).toList();
+        listHistory.value = new List.from(listHistory.reversed);
+      }).catchError((onError) {
+        print("Loii:${onError.toString()}");
+      });
+    }
+  }
+
+  void gethistory() async {
+    String url =
+        "https://qlbvxk.herokuapp.com/api/histories/${loginController.accountObj.maNd}";
+    var headers = {"Content-type": "application/json"};
+    Request request = Request(
+        Url: url,
+        body: {"noiDen": "i", "noiDi": "i", "ngayDi": "i"},
+        header: headers);
+    request.get().then((value) {
+      var responsedata = jsonDecode(value.body) as List;
+      listHistory.value = responsedata.map((e) {
+        return SearchObj.fromJson(e);
+      }).toList();
+      listHistory.value = new List.from(listHistory.reversed);
+    }).catchError((onError) {
+      print("loi${onError.toString()}");
+    });
+  }
+
+  void deleteHistory() async {
+    var headers = {"Content-type": "application/json"};
+    String url =
+        "https://qlbvxk.herokuapp.com/api/histories/${loginController.accountObj.maNd}";
+    Request request = Request(
+        Url: url,
+        body: {"noiDen": "i", "noiDi": "i", "ngayDi": "i"},
+        header: headers);
+    request.delete().then((value) {
+      if (value.statusCode == 204) {
+        print("thanh cong");
+        gethistory();
+      } else
+        print("that bai");
+    }).catchError((onError) {
+      print("Loi delete${onError.toString()}");
+    });
   }
 }

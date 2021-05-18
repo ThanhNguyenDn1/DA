@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:ticketapp/Controller/Home_controller.dart';
+import 'package:intl/intl.dart';
+import 'package:ticketapp/Controller/Chair_controller.dart';
+import 'package:ticketapp/Models/SeatInfor.dart';
 import 'package:ticketapp/Models/ticketInforObj.dart';
 import 'package:ticketapp/Notify/notify.dart';
 import 'package:ticketapp/Theme/colors.dart';
@@ -9,8 +11,8 @@ import 'package:ticketapp/Theme/styles.dart';
 class DetailSearch extends StatelessWidget {
   late String nhaxe, noidi, noiden, giodi, gioden, day;
   late double giatien;
-  HomeController controllerDetail = Get.put(HomeController());
-  List<String> listcho = [];
+  ChairController controllerDetail = Get.put(ChairController());
+  List<SeatInfor> listcho = [];
   DetailSearch({
     required this.nhaxe,
     required this.noidi,
@@ -21,6 +23,35 @@ class DetailSearch extends StatelessWidget {
     required this.day,
     required this.listcho,
   });
+  String getNameOfListCho(List<SeatInfor> list, int stt){
+    String s="";
+    if(stt==0){
+      for(int i=0; i<list.length; i++){
+        if(i==0){
+          s=s+list[i].name;
+        }
+        else{
+          s=s+", "+list[i].name;
+        }
+
+      }
+    }
+    if(stt==1){
+      for(int i=0; i<list.length; i++){
+        if(i==0){
+          s=s+list[i].MaGhe.toString();
+        }
+        else{
+          s=s+","+list[i].MaGhe.toString();
+        }
+      }
+    }
+    return s;
+  }
+  
+  String time(String s){
+    return s.substring(11,16);
+  }
   @override
   Widget build(BuildContext context) {
 
@@ -135,14 +166,17 @@ class DetailSearch extends StatelessWidget {
                           width: 20,
                         ),
                         Text(noidi, style: AppThemes.Text18),
-                        Icon(Icons.arrow_right_alt_sharp),
-                        Icon(
-                          Icons.location_city_rounded,
-                          color: AppColors.background,
-                          size: 30,
-                        ),
                         SizedBox(
-                          width: 20,
+                          width: 10,
+                        ),
+                        Icon(Icons.arrow_right_alt_sharp),
+                        // Icon(
+                        //   Icons.location_city_rounded,
+                        //   color: AppColors.background,
+                        //   size: 30,
+                        // ),
+                        SizedBox(
+                          width: 10,
                         ),
                         Text(noiden, style: AppThemes.Text18),
                       ],
@@ -178,12 +212,12 @@ class DetailSearch extends StatelessWidget {
                         ),
                         Text("Thời gian: ", style: AppThemes.Text18),
                         Text(
-                          giodi,
+                          time(giodi),
                           style: AppThemes.Text18Medium,
                         ),
                         Icon(Icons.arrow_right_alt_sharp),
                         Text(
-                          gioden,
+                          time(gioden),
                           style: AppThemes.Text18Medium,
                         ),
                       ],
@@ -194,7 +228,7 @@ class DetailSearch extends StatelessWidget {
                     Row(
                       children: [
                         Icon(
-                          Icons.chat,
+                          Icons.airline_seat_recline_normal_sharp,
                           color: AppColors.background,
                           size: 30,
                         ),
@@ -202,7 +236,7 @@ class DetailSearch extends StatelessWidget {
                           width: 20,
                         ),
                         Text(
-                          "Chỗ: ${listcho.join(" ")} ",
+                          "Chỗ: ${getNameOfListCho(listcho,0)} ",
                           style: AppThemes.Text18,
                         ),
                       ],
@@ -225,7 +259,7 @@ class DetailSearch extends StatelessWidget {
                           style: AppThemes.Text18,
                         ),
                         Text(
-                            "${giatien * controllerDetail.listSelected.length} đ",
+                            "${NumberFormat.simpleCurrency(locale: 'vi').format(giatien * controllerDetail.listSelected.length)}",
                             style: AppThemes.Text18Medium),
                       ],
                     ),
@@ -251,7 +285,7 @@ class DetailSearch extends StatelessWidget {
                           borderRadius: BorderRadius.horizontal(
                               left: Radius.zero, right: Radius.zero)),
                       child: Center(
-                        child: Text(  "${giatien * controllerDetail.listSelected.length*0.5} đ"),
+                        child: Text(  "${NumberFormat.simpleCurrency(locale: 'vi').format(giatien * controllerDetail.listSelected.length*0.5)}"),
                       ),
                     )
                   ],
@@ -269,16 +303,10 @@ class DetailSearch extends StatelessWidget {
                     for (var i = 0; i < controllerDetail.listChair.length; i++){
                       controllerDetail.listChair[i].colorChair= Colors.white;
                     }
+                    controllerDetail.apiBookTicket(getNameOfListCho(listcho, 1));
 
                     controllerDetail.listSelected.clear();
-
-
-                 //   Navigator.push(context, MaterialPageRoute(builder: (context) =>Notify(),));
-
-                  //  controllerDetail.listTicketed[0]
-
                     Get.off(()=>Notify());
-
                   },
                   color: AppColors.background,
                   child: Container(

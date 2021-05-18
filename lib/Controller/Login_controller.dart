@@ -11,6 +11,7 @@ class LoginController extends GetxController {
   var eye=true.obs;
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
+  late AccountObj accountObj;
   @override
   void onInit() {
     // TODO: implement onInit
@@ -39,6 +40,7 @@ class LoginController extends GetxController {
       AccountObj accountObj =AccountObj.fromJson(json.decode(value.body));
       print(accountObj.maNd);
       if(accountObj.maNd>0){
+        this.accountObj=accountObj;
         Get.back();
         emailController.text ="";
 

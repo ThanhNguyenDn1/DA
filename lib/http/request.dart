@@ -15,4 +15,10 @@ class Request {
   Future<http.Response> get() {
     return http.get(Uri.parse(Url)).timeout(Duration(minutes: 2));
   }
+
+  Future <http.Response> delete() async{
+    var response= await http.delete(Uri.parse(this.Url));
+    return response;
+  }
 }
+

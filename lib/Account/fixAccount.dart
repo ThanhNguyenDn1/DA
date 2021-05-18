@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:ticketapp/Controller/Chair_controller.dart';
 import 'package:ticketapp/Controller/Home_controller.dart';
 import 'package:ticketapp/Theme/colors.dart';
 import 'package:ticketapp/Theme/styles.dart';
@@ -11,7 +12,7 @@ class FixAccount extends StatefulWidget {
 
 class _FixAccountState extends State<FixAccount> {
   late String name,phone,address,cmnd;
-  HomeController controllerfix = Get.put(HomeController());
+  ChairController controllerfix = Get.put(ChairController());
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
